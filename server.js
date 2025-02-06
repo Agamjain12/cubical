@@ -5,7 +5,14 @@ import homeRoutes from "./src/routes/homeRoute.js";
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://cubical-bw9p.onrender.com",
+    methods: ["GET", "POST", "DELETE", "PUT"],
+    allowedHeaders: ["Content-Type", "Access-Control-Allow-Credentials"],
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
