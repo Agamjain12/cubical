@@ -8,7 +8,7 @@ dotenv.config();
 
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.SECRET;
-const REDIRECT_URI = "http://localhost:6600/accounts/google/login/callback/";
+const REDIRECT_URI = "https://cubical-bw9p.onrender.com/accounts/google/login/callback/";
 
 export const GoogleLogin = async (req, res) => {
   const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=profile email&prompt=select_account`;
