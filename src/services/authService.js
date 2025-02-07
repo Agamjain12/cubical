@@ -62,3 +62,24 @@ export const updateUserType = async (googleId, userType) => {
     throw error;
   }
 };
+
+export const getAllOperators = async () => {
+  try {
+    const operators = await prisma.user.findMany({
+      where: {
+        userType: "operator",
+      },
+      select: {
+        id: true,
+        googleId: true,
+        email: true,
+        name: true,
+        profilePicture: true,
+      },
+    });
+    return operators;
+  } catch (error) {
+    console.error("Error fetching operators:", error);
+    throw error;
+  }
+};

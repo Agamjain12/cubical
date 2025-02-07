@@ -1,24 +1,27 @@
 import express from "express";
 import cors from "cors";
+import { createServer } from "http";
 import authRoutes from "./src/routes/authRoute.js";
-import homeRoutes from "./src/routes/homeRoute.js";
+import { initializeSocket } from "./src/services/socketService.js";
 
 const app = express();
+const httpServer = createServer(app);
 
-app.use(
-  cors({
-    origin: "https://cubical-bw9p.onrender.com",
-    methods: ["GET", "POST", "DELETE", "PUT"],
-    allowedHeaders: ["Content-Type", "Access-Control-Allow-Credentials"],
-    credentials: true,
-  })
-);
+const corsOptions = {
+  origin: ["http://localhost:5173", "https://cubical-bw9p.onrender.com"],
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/", authRoutes);
-app.use("/", homeRoutes);
 
-app.listen(6600, () => {
+// Initialize Socket.io
+initializeSocket(httpServer);
+
+httpServer.listen(6600, () => {
   console.log("Server started on port 6600");
 });

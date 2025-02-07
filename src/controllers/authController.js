@@ -1,6 +1,10 @@
 import dotenv from "dotenv";
 import axios from "axios";
-import { GoogleLoginService, updateUserType } from "../services/authService.js";
+import {
+  GoogleLoginService,
+  updateUserType,
+  getAllOperators,
+} from "../services/authService.js";
 import { generateToken } from "../utils/jwt.js";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
@@ -8,11 +12,11 @@ dotenv.config();
 
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.SECRET;
-const REDIRECT_URI = "https://cubical-bw9p.onrender.com/accounts/google/login/callback/";
+const REDIRECT_URI = process.env.REDIRECT_URI;
 
 export const GoogleLogin = async (req, res) => {
   const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=profile email&prompt=select_account`;
-  res.redirect(url);
+  res.send(url);
 };
 
 export const GoogleLoginCallback = async (req, res) => {
@@ -51,29 +55,24 @@ export const GoogleLoginCallback = async (req, res) => {
 
     const response = await GoogleLoginService(user);
     const token = generateToken(response);
-    res.json({
-      success: true,
-      message: "Successfully logged in",
-      data: {
-        user: {
-          googleId: response.googleId,
-          email: response.email,
-          name: response.name,
-          userType: response.userType,
-        },
-        token,
-      },
-    });
+
+    // Create a query string with the data
+    const queryParams = new URLSearchParams({
+      token: token,
+      googleId: response.googleId,
+      email: response.email,
+      name: response.name,
+      userType: response.userType || "",
+      profilePicture: response.profilePicture,
+    }).toString();
+
+    res.redirect(`http://localhost:5173/select-type?${queryParams}`);
   } catch (error) {
     console.error(
       "Error during Google authentication:",
       error.response?.data || error.message
     );
-    res.status(500).json({
-      success: false,
-      message: "Authentication failed",
-      error: error.response?.data || error.message,
-    });
+    res.redirect(`http://localhost:5173/login`);
   }
 };
 
@@ -145,6 +144,22 @@ export const getUserProfile = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Error fetching user profile",
+      error: error.message,
+    });
+  }
+};
+
+export const fetchOperators = async (req, res) => {
+  try {
+    const operators = await getAllOperators();
+    res.json({
+      success: true,
+      data: operators,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error fetching operators",
       error: error.message,
     });
   }
