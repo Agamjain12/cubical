@@ -66,13 +66,15 @@ export const GoogleLoginCallback = async (req, res) => {
       profilePicture: response.profilePicture,
     }).toString();
 
-    res.redirect(`http://localhost:5173/select-type?${queryParams}`);
+    res.redirect(
+      `https://cubicals-agam.netlify.app/select-type?${queryParams}`
+    );
   } catch (error) {
     console.error(
       "Error during Google authentication:",
       error.response?.data || error.message
     );
-    res.redirect(`http://localhost:5173/login`);
+    res.redirect(`https://cubicals-agam.netlify.app/login`);
   }
 };
 
