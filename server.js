@@ -11,7 +11,7 @@ const corsOptions = {
   origin: [
     "http://localhost:5173",
     "https://cubical-bw9p.onrender.com",
-    "https://cubicals-agam.netlify.app/",
+    "https://cubicals-agam.netlify.app",
   ],
   credentials: true,
 };
